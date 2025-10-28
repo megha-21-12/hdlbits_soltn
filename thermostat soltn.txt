@@ -1,0 +1,21 @@
+module top_module (
+    input too_cold,
+    input too_hot,
+    input mode,
+    input fan_on,
+    output heater,
+    output aircon,
+    output fan
+); 
+    //i am using a conditional ternary statement as solution should have only 3 lines
+
+    assign heater=((too_cold==1)&&(mode==1)&&(aircon==0))?1:0;
+    //only switch on heater when it's in heating mode and ac is off and its too cold
+
+    assign aircon=((heater==0)&&(mode==0)&&(too_hot==1))?1:0;
+    //only switch on cooler when in cooling mode and heater off and its too hot
+
+    assign fan=(heater==1||aircon==1||fan_on==1)?1:0;
+    //only switch on fan when either heater or ac on OR when user gives fan_on as 1
+
+endmodule
