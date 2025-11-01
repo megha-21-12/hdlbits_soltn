@@ -1,0 +1,15 @@
+module top_module (
+    input clk,
+    input reset,
+    input [31:0] in,
+    output [31:0] out
+);
+    reg [31:0] prev;
+    always @(posedge clk)begin
+        if(reset)
+            out<=32'b0;//reset makes out zero
+        else
+            out<=out|(prev&~in);//1 on 1→0 transition,else doesnt change
+        prev<=in;//updates previous input state
+    end
+endmodule
