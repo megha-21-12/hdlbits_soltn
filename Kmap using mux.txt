@@ -1,0 +1,21 @@
+module top_module (
+    input c,
+    input d,
+    output [3:0] mux_in
+); 
+    //from kmap,when ab=00,f=c|d;(01->0),(11=c&d),(10=~d)
+   assign mux_in[1] =1'b0;
+   mux2 m0 (.sel(d),.a(c),.b(1'b1),.out(mux_in[0]));
+   mux2 m2 (.sel(d),.a(1'b1),.b(1'b0),.out(mux_in[2]));
+   mux2 m3 (.sel(~d),.a(c),.b(1'b0),.out(mux_in[3]));
+
+endmodule
+
+module mux2 (
+    input  wire sel,
+    input  wire a,
+    input  wire b,
+    output wire out
+);
+    assign out=sel?b:a;
+endmodule
