@@ -1,0 +1,55 @@
+module top_module(
+    input clk,
+    input reset,
+    input ena,
+    output pm,
+    output [7:0] hh,
+    output [7:0] mm,
+    output [7:0] ss); 
+
+    always @(posedge clk)begin
+        if(reset) begin//clock is set to 12:00:00 am
+            hh <= 8'h12;
+            mm <= 8'h00;
+            ss <= 8'h00;
+            pm <= 1'b0;
+        end 
+        else if(ena)begin//for getting seconds,limit=59
+            if (ss[3:0] == 9) begin//seconds ones,if 9 setsto zero
+                ss[3:0] <= 0;
+                if (ss[7:4] == 5)//seconds tens, if 59 sets to 0
+                    ss[7:4] <= 0;
+                else
+                    ss[7:4] <= ss[7:4] + 1;//less than 59,so inc by 1
+            end else//ones digit is <9, so simply inc by 1
+                ss[3:0] <= ss[3:0] + 1;
+            
+            if (ss == 8'h59) begin//minutes,limit=59,same logic as ones
+                if (mm[3:0] == 9) begin
+                    mm[3:0] <= 0;
+                    if (mm[7:4]==5)
+                        mm[7:4]<=0;
+                    else
+                        mm[7:4]<=mm[7:4]+1;
+                end else
+                    mm[3:0]<=mm[3:0]+1;
+            end
+            
+            if (mm==8'h59&& ss==8'h59) begin
+                if (hh==8'h11) begin
+                    hh<=8'h12;// after 11,change to 12 n not 00
+                    pm<=~pm;// toggle AM/PM
+                end
+                else if (hh==8'h12) begin
+                    hh<=8'h01;// after 12,change to 1
+                end
+                else if (hh[3:0]==9) begin//similar to secs n mins
+                    hh[3:0] <=0;
+                    hh[7:4] <=hh[7:4]+1;
+                end
+                else
+                    hh[3:0] <=hh[3:0]+1;
+            end
+        end
+    end
+endmodule

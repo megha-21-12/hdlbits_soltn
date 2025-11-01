@@ -1,0 +1,30 @@
+module top_module (
+    input clk,
+    input reset,   // Synchronous active-high reset
+    output [3:1] ena,
+    output [15:0] q);
+    //enable bit becomes one when all the lower digits are 9 
+    assign ena[1]=(q[3:0]==9);
+    assign ena[2]=(q[7:0]=={8'h99});
+    assign ena[3]=(q[11:0]=={12'h999});
+    always @(posedge clk) begin
+        if (reset)
+            q <= 0;
+        else begin
+            //for ones position
+            if (q[3:0]==9)
+                q[3:0] <= 0;//become zero
+            else
+                q[3:0] <= q[3:0] + 1;//increases by one as it is<9
+            // for tens pos,sames ones logic but using conditional statement
+            if (ena[1])
+                q[7:4] <=(q[7:4]==9)?0 :q[7:4]+1;
+            // hundreds pos
+            if (ena[2])
+                q[11:8] <=(q[11:8]==9)?0:q[11:8]+1;
+            // thousands pos
+            if (ena[3])
+                q[15:12] <= (q[15:12]==9)?0:q[15:12]+1;
+        end
+    end
+endmodule
